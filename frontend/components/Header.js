@@ -66,7 +66,6 @@ const Header = () => (
         </Link>
       </Logo>
 
-
       <Nav />
     </div>
     <div className="sub-bar">
