@@ -1,16 +1,9 @@
-import { Component } from 'react';
+import CreateItem from '../components/CreateItem'
 
-class Sell extends Component {
-
-  render() {
-    return (
-      <div>
-        <p>
-          Sell
-        </p>
-      </div>
-    );
-  }
-}
+const Sell = props => (
+  <>
+    <CreateItem />
+  </>
+);
 
 export default Sell;
