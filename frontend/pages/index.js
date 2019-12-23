@@ -2,7 +2,7 @@ import Items from '../components/Items'
 
 const Home = props => (
   <>
-    <Items />
+    <Items page={props.query.page || 1} />
   </>
 );
 
