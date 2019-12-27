@@ -3,12 +3,24 @@ const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 
+const { transport, makeANiceEmail } = require('../mail');
+
 const Mutation = {
   async createItem(parent, args, ctx, info) {
-    // TODO Check if user is logged in
+    if (!ctx.request.userId) {
+      throw new Error('You must be logged in to do that!');
+    }
 
     const item = await ctx.db.mutation.createItem({
-      data: { ...args }
+      data: {
+        // This is how to create a relationship between the Item and the User
+        user: {
+          connect: {
+            id: ctx.request.userId,
+          },
+        },
+        ...args
+      }
     }, info);
 
     console.log(item)
@@ -101,8 +113,22 @@ const Mutation = {
       where: { email: args.email },
       data: { resetToken, resetTokenExpiry },
     })
+    // Email them that reset token
+    const mailRes = await transport.sendMail({
+      from: 'anthony.synenko@gmail.com',
+      to: user.email,
+      subject: 'Your Password Reset',
+      html: makeANiceEmail(
+        `Your Password reset token is here \n\n 
+        <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
+          Click Here to Reset
+        </a>`
+      ),
+
+    })
+
+    // Return message
     return { message: 'Thanks!' };
-    // TODO: Email them that reset token
   },
   async resetPassword(parent, args, ctx, info) {
     // check if the passwords match
