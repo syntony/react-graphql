@@ -11,7 +11,7 @@ const SIGNOUT_MUTATION = gql`
   }
 `
 
-const Signout = props => (
+const Signout = () => (
   <Mutation
     mutation={SIGNOUT_MUTATION}
     refetchQueries={[{ query: CURRENT_USER_QUERY }]}
