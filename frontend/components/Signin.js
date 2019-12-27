@@ -4,17 +4,15 @@ import gql from 'graphql-tag';
 
 import Form from './styles/Form';
 import Error from './ErrorMessage';
-import { CURRENT_USER_QUERY } from './User'
+import { CURRENT_USER_QUERY } from './User';
 
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
+const SIGNIN_MUTATION = gql`
+  mutation SIGNIN_MUTATION(
     $email: String!,
-    $name: String!,
     $password: String!
   ) {
-    signup(
+    signin(
       email: $email,
-      name: $name,
       password: $password
     ) {
       id
@@ -24,10 +22,9 @@ const SIGNUP_MUTATION = gql`
   }
 `
 
-class Signup extends Component {
+class Signin extends Component {
   state = {
     email: '',
-    name: '',
     password: '',
   }
 
@@ -38,42 +35,30 @@ class Signup extends Component {
   render() {
     return (
         <Mutation
-          mutation={SIGNUP_MUTATION}
+          mutation={SIGNIN_MUTATION}
           variables={this.state}
           refetchQueries={[{ query: CURRENT_USER_QUERY }]}
         >
-          {(signup, { error, loading }) => (
-              <Form method="post" onSubmit={async e => {
+          {(signin, { error, loading }) => (
+              <Form
+                method="post"
+                onSubmit={async e => {
                 e.preventDefault();
-                await signup();
-                this.setState({
-                  email: '',
-                  name: '',
-                  password: '',
-                });
+                await signin();
+                this.setState({ email: '', password: '' });
               }}>
                 <fieldset disabled={loading} aria-busy={loading}>
-                  <h2>Sign Up for An Account</h2>
+                  <h2>Sign into your account</h2>
+
                   <Error error={error} />
 
                   <label htmlFor="email">
                     Email
                     <input
-                      type="text"
+                      type="email"
                       name="email"
                       placeholder="email"
                       value={this.state.email}
-                      onChange={this.saveToState}
-                    />
-                  </label>
-
-                  <label htmlFor="name">
-                    Name
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="name"
-                      value={this.state.name}
                       onChange={this.saveToState}
                     />
                   </label>
@@ -90,7 +75,7 @@ class Signup extends Component {
                   </label>
 
                   <button type="submit">
-                    Sign Up
+                    Sign In
                   </button>
                 </fieldset>
               </Form>
@@ -100,4 +85,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup
+export default Signin
